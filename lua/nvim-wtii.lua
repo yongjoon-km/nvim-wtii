@@ -5,23 +5,41 @@ local clock = require("nvim-wtii.clock")
 -- Only one window is available now.
 local time_win_id = nil
 
-M.setup = function() 
-    vim.on_key(function() 
+local update_time = function(time)
+    if not time_win_id then
+        return
+    end
+	local lines = { " " .. time }
+    vim.schedule(function()
+        local bufnr = vim.fn.winbufnr(time_win_id)
+        vim.api.nvim_buf_set_lines(bufnr, 1, -1, false, lines)
+    end)
+
+end
+
+M.setup = function()
+    vim.on_key(function()
         if not time_win_id then
             return
         end
         vim.api.nvim_win_close(time_win_id, true)
         time_win_id = nil
     end)
+
+    -- timer to update time value if window is active
+    local timer = vim.uv.new_timer()
+    timer:start(100, 100, function()
+        update_time(clock.current_time())
+    end)
+
 end
+
 
 M.current_time = function()
 	local bufnr = vim.api.nvim_create_buf(false, true)
 	local lines = { " " .. clock.current_time() }
 
 	vim.api.nvim_buf_set_lines(bufnr, 1, -1, false, lines)
-    vim.api.nvim_buf_set_option(bufnr, "readonly", true)
-    vim.api.nvim_buf_set_option(bufnr, "modifiable", false)
 
     local width = 10
     local height = 3
