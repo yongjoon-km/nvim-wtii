@@ -48,8 +48,8 @@ M.display_time_window = function()
 
     local width = 10
     local height = 3
-    local row = (vim.fn.winheight(0) / 2) - (width / 2)
-    local col = (vim.fn.winwidth(0) / 2) - (height / 2)
+    local row = (vim.fn.winheight(0) / 2) - (height / 2)
+    local col = (vim.fn.winwidth(0) / 2) - (width / 2)
 
 	local opts = {
 		style = "minimal",
