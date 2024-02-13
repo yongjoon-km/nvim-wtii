@@ -27,9 +27,13 @@ local convert_to_sec = function(timer_str)
 		local c = timer_str:sub(i, i)
 		if c == "h" or c == "m" or c == "s" then
 			sec = sec + get_sec(num, c)
-		elseif c ~= "0" then
+		else
+            if (num == 0 and c == '0') then
+                goto continue
+            end
 			num = (num * 10) + to_number(c)
 		end
+	    ::continue::
 	end
 	return sec
 end
