@@ -1,5 +1,7 @@
 local M = {}
 
+local timer = nil
+
 local get_sec = function(number, char)
 	if number == 0 then
 		return 0
@@ -67,14 +69,25 @@ local show_popup = function(str)
 end
 
 M.start_timer = function()
+    if timer ~= nil and vim.uv.timer_get_due_in(timer) ~= 0 then
+        print("timer is working currently")
+        return
+    end
 	vim.ui.input({ prompt = "timer value: (ex) 1h2m2s" }, function(input)
 		local timer_sec = convert_to_sec(input)
 
-		local timer = vim.uv.new_timer()
+		timer = vim.uv.new_timer()
 		timer:start(timer_sec * 1000, 0, function()
 			show_popup("time's up")
 		end)
 	end)
+end
+
+M.check_timer = function()
+    if not timer then
+        return
+    end
+    print("timer remains " .. vim.uv.timer_get_due_in(timer) / 1000 .. " sec")
 end
 
 return M

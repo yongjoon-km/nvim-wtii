@@ -14,4 +14,8 @@ M.start_timer = function()
     timer.start_timer()
 end
 
+M.check_timer = function()
+    timer.check_timer()
+end
+
 return M
