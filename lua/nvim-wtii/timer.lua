@@ -1,21 +1,47 @@
 local M = {}
 
-local convert_to_sec = function(timer_str)
-	-- 1h2m3s
-	-- TODO: Need to create time string parser
-	local h, m, s = string.match(timer_str, "(%d+)h(%d+)m(%d+)s")
-	local timer_sec = h * 3600 + m * 60 + s
-	return timer_sec
+local get_sec = function(number, char)
+	if number == 0 then
+		return 0
+	end
+
+	if char == "h" then
+		return number * 24 * 60
+	elseif char == "m" then
+		return number * 60
+	elseif char == "s" then
+		return number
+	else
+		return 0
+	end
 end
 
-function show_popup(str)
+local to_number = function(char)
+	return string.byte(char) - string.byte("0")
+end
+
+local convert_to_sec = function(timer_str)
+	local sec = 0
+	local num = 0
+	for i = 1, #timer_str do
+		local c = timer_str:sub(i, i)
+		if c == "h" or c == "m" or c == "s" then
+			sec = sec + get_sec(num, c)
+		elseif c ~= "0" then
+			num = (num * 10) + to_number(c)
+		end
+	end
+	return sec
+end
+
+local show_popup = function(str)
 	vim.schedule(function()
 		local bufnr = vim.api.nvim_create_buf(false, true)
 		local lines = { " " .. str .. " " }
 
 		vim.api.nvim_buf_set_lines(bufnr, 1, -1, false, lines)
-        vim.api.nvim_buf_set_option(bufnr, "modifiable", false)
-        vim.api.nvim_buf_set_option(bufnr, "readonly", true)
+		vim.api.nvim_buf_set_option(bufnr, "modifiable", false)
+		vim.api.nvim_buf_set_option(bufnr, "readonly", true)
 
 		local width = string.len(str) + 2
 		local height = 3
