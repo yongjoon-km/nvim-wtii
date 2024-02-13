@@ -4,6 +4,7 @@ local timer = require("nvim-wtii.timer")
 
 M.setup = function()
     clock.setup()
+    timer.setup()
 end
 
 M.current_time = function()
