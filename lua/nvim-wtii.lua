@@ -15,8 +15,8 @@ M.start_timer = function()
     timer.start_timer()
 end
 
-M.check_timer = function()
-    timer.check_timer()
+M.open_timer_checker = function()
+    timer.open_timer_checker()
 end
 
 return M

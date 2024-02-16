@@ -117,7 +117,7 @@ M.start_timer = function()
 	end)
 end
 
-M.check_timer = function()
+M.open_timer_checker = function()
     if not timer_obj.timer then
         return
     end
