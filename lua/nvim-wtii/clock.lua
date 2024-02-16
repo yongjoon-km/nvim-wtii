@@ -1,3 +1,5 @@
+local window = require("nvim-wtii.window")
+
 local M = {}
 
 local time_window_id = nil
@@ -19,49 +21,31 @@ local update_time = function()
 end
 
 local event_remove_window = function()
-    vim.on_key(function()
-        if not time_window_id then
-            return
-        end
-        vim.api.nvim_win_close(time_window_id, true)
-        time_window_id = nil
-    end)
+	vim.on_key(function()
+		if not time_window_id then
+			return
+		end
+		vim.api.nvim_win_close(time_window_id, true)
+		time_window_id = nil
+	end)
 end
 
 local event_update_time = function()
-    local timer = vim.uv.new_timer()
-    timer:start(100, 100, function()
-        update_time()
-    end)
+	local timer = vim.uv.new_timer()
+	timer:start(100, 100, function()
+		update_time()
+	end)
 end
 
 M.setup = function()
-    event_remove_window()
-    event_update_time()
+	event_remove_window()
+	event_update_time()
 end
 
 M.display_time_window = function()
-	local bufnr = vim.api.nvim_create_buf(false, true)
-	local lines = { " " .. now_time_str() }
-
-	vim.api.nvim_buf_set_lines(bufnr, 1, -1, false, lines)
-
-    local width = 10
-    local height = 3
-    local row = (vim.fn.winheight(0) / 2) - (height / 2)
-    local col = (vim.fn.winwidth(0) / 2) - (width / 2)
-
-	local opts = {
-		style = "minimal",
-		relative = "win",
-		width = width,
-		height = height,
-        row = row,
-        col = col,
-		border = "rounded",
-	}
-
-    time_window_id = vim.api.nvim_open_win(bufnr, true, opts)
+	window.show_popup(now_time_str(), { readonly = false }, function(window_id)
+		time_window_id = window_id
+	end)
 end
 
 return M
