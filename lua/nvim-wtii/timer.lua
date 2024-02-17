@@ -1,4 +1,5 @@
 local window = require("nvim-wtii.window")
+local util = require("nvim-wtii.util")
 
 local M = {}
 
@@ -7,38 +8,18 @@ local timer_obj = {
 	timer = nil,
 }
 
-local get_sec = function(number, char)
-	if number == 0 then
-		return 0
-	end
-
-	if char == "h" then
-		return number * 24 * 60
-	elseif char == "m" then
-		return number * 60
-	elseif char == "s" then
-		return number
-	else
-		return 0
-	end
-end
-
-local to_number = function(char)
-	return string.byte(char) - string.byte("0")
-end
-
-local convert_to_sec = function(timer_str)
+local parse_to_sec = function(timer_str)
 	local sec = 0
 	local num = 0
 	for i = 1, #timer_str do
 		local c = timer_str:sub(i, i)
 		if c == "h" or c == "m" or c == "s" then
-			sec = sec + get_sec(num, c)
+			sec = sec + util.time_to_sec(num, c)
 		else
 			if num == 0 and c == "0" then
 				goto continue
 			end
-			num = (num * 10) + to_number(c)
+			num = (num * 10) + util.to_number(c)
 		end
 		::continue::
 	end
@@ -82,7 +63,7 @@ M.start_timer = function()
 		return
 	end
 	vim.ui.input({ prompt = "timer value: (ex) 1h2m2s" }, function(input)
-		local timer_sec = convert_to_sec(input)
+		local timer_sec = parse_to_sec(input)
 
 		timer_obj.timer = vim.uv.new_timer()
 		timer_obj.timer:start(timer_sec * 1000, 0, function()
