@@ -67,7 +67,7 @@ M.start_timer = function()
 
 		timer_obj.timer = vim.uv.new_timer()
 		timer_obj.timer:start(timer_sec * 1000, 0, function()
-			window.show_popup("time's up", { readonly = true }, function() end)
+			window.show_popup("time's up", { readonly = true })
 		end)
 	end)
 end
@@ -76,9 +76,7 @@ M.open_timer_checker = function()
 	if not timer_obj.timer then
 		return
 	end
-	window.show_popup(vim.uv.timer_get_due_in(timer_obj.timer) / 1000, { readonly = true }, function(window_id)
-		timer_obj.window_id = window_id
-	end)
+	timer_obj.window_id = window.show_popup(vim.uv.timer_get_due_in(timer_obj.timer) / 1000, { readonly = true })
 end
 
 M.setup = function()

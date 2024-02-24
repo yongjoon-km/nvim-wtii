@@ -43,9 +43,7 @@ M.setup = function()
 end
 
 M.display_time_window = function()
-	window.show_popup(now_time_str(), { readonly = false }, function(window_id)
-		time_window_id = window_id
-	end)
+	time_window_id = window.show_popup(now_time_str(), { readonly = false })
 end
 
 return M
